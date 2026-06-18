@@ -89,7 +89,6 @@ alias vps = ssh ubuntu@82.70.46.93
 alias apt = pac
 alias micro = sudo nano -A -D -F -G -G -I -L -M -S -U -Z -a -l -q -_ -/
 alias nano = sudo nano -A -D -F -G -G -I -L -M -S -U -Z -a -l -q -_ -/
-alias docker = sudo podman
 alias pacman = sudo pacman
 alias pacman.conf = sudo nano /etc/pacman.conf
 alias yay = paru

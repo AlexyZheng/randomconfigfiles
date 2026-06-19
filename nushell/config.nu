@@ -84,7 +84,7 @@ $env.XMODIFIERS = "@im=fcitx"
 # $env.SDL_IM_MODULE = "fcitx"
 
 # Aliases
-alias vps = ssh ubuntu@82.70.46.93
+alias vps = ssh ubuntu@rabota.76543211.xyz
 
 alias apt = pac
 alias micro = sudo nano -A -D -F -G -G -I -L -M -S -U -Z -a -l -q -_ -/

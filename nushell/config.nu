@@ -21,7 +21,7 @@
 fastfetch --logo none --config ~/.config/fastfetch/config.jsonc
 $env.config.show_banner = false
 $env.PROMPT_COMMAND_RIGHT = ""
-$env.config.buffer_editor = ["nano" -A -D -F -G -G -I -L -M -S -U -Z -a -l -q -_ -/]
+$env.config.buffer_editor = ["nano" -A -D -F -G -G -I -L -M -S -U -Z -a -q -_ -/]
 
 use ~/.config/nushell/scripts/bash-env.nu
 
@@ -31,14 +31,22 @@ $env.QT_IM_MODULE = "fcitx"
 $env.XMODIFIERS = "@im=fcitx"
 # $env.SDL_IM_MODULE = "fcitx"
 
-# Aliases
 def "sudo nano" [...args: string] {
-    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -l -q '-_' '-/' ...$args
+    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -q '-_' '-/' ...$args
 }
 
 def nano [...args: string] {
-    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -l -q '-_' '-/' ...$args
+    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -q '-_' '-/' ...$args
 }
+
+def "sudo nano -l" [...args: string] {
+    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -l -q -l '-_' '-/' ...$args
+}
+
+def "nano -l" [...args: string] {
+    ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -l -q -l '-_' '-/' ...$args
+}
+
 
 alias vps = ssh ubuntu@work.76543211.xyz
 alias yay = paru
@@ -55,32 +63,11 @@ alias systemctl = sudo systemctl
 alias cat = open
 
 
-# 1. Fetch system details safely using modern sys commands
-let host_data = (sys host | select hostname os_version kernel_version uptime)
-
-# 2. Extract BIOS firmware info
+# 1. Fetch system details safely using modern sys commands                                                                       
+let host_data = (sys host | select hostname os_version kernel_version uptime)                                                    
+                                                                                                                                 
+# 2. Extract BIOS firmware info                                                                                                  
 let bios_version = (try { open /sys/class/dmi/id/bios_version | str trim } catch { null })
-
-# 3. Extract Android-specific properties using socat to Android's native shell (suppress socat errors via bash subshell)
-let android_release = (try {
-    (echo "getprop ro.build.version.release" | socat - tcp:localhost:5555 | complete | get stdout | str trim)
-} catch { null })
-
-let android_sdk = (try {
-    (echo "getprop ro.build.version.sdk" | socat - tcp:localhost:5555 | complete | get stdout | str trim)
-} catch { null })
-
-# 3b. Merge Android info into single formatted string
-let android_version = if ($android_release != null and $android_sdk != null and ($android_release | is-not-empty) and ($android_sdk | is-not-empty)) {
-    $"[($android_release) (SDK ($android_sdk))]"
-} else {
-    null
-}
-
-
-let android_kernel_version = (try {
-    (echo "uname -r" | socat - tcp:localhost:5555 | complete | get stdout | str trim)
-} catch { null })
 
 # 4. Merge all gathered metrics into one uniform Nushell Record
 let result = (
@@ -88,10 +75,7 @@ let result = (
     | insert bios_version $bios_version
     | move bios_version --after hostname
     | move os_version --after kernel_version
-    | insert android_kernel_version $android_kernel_version
-    | move android_kernel_version --after os_version
-    | insert android_version $android_version
-    | move android_version --after android_kernel_version
+
 
 )
 

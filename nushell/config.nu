@@ -40,7 +40,22 @@ $env.QT_IM_MODULE = "fcitx"
 $env.XMODIFIERS = "@im=fcitx"
 # $env.SDL_IM_MODULE = "fcitx"
 
+
+######################################################################
+#Switch between shannon shell's with command "switch" - requires wayland, active ydotool socket & also bashrc config
+#could try embedding required bashrc string config within this file
+
+$env.YDOTOOL_SOCKET = "/run/user/1000/.ydotool_socket"
+
+def switch [] {
+    ydotool key 42:1 15:1 15:0 42:0
+}
+
+
+
 # Aliases
+alias nu = shannon
+
 def "sudo nano" [...args: string] {
     ^sudo nano -A -D -F -G -I -L -M -S -U -Z -a -q '-_' '-/' ...$args
 }
